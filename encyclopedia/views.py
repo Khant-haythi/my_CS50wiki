@@ -7,6 +7,7 @@ from . import util
 from encyclopedia.models import Entry
 
 
+
 def index(request):
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
@@ -70,38 +71,38 @@ class NewPageForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea(attrs={'rows': 5, 'cols': 5}))
 
 
-def new_page(request,title=None):
+def new_page(request):
 
     if request.method == "POST":
 
-        form = NewPageForm(request.POST)
+        title = request.POST.get('title')
+
+        content = request.POST.get('content')
+
+        
+        my_entry = util.get_entry(title)
+      #  html_content = markdown.markdown(my_entry)
+        if my_entry:
+
+            error_message = "An entry with that title already exists."
+
+            return render(request, 'encyclopedia/newPage.html', {'title': title, 'content': content, 'error_message': error_message})
 
 
-        if form.is_valid():
-
-            title = form.cleaned_data['title']
-
-            content = form.cleaned_data['content']
-
-            my_entry = util.get_entry(title)
-            if my_entry:
-
-                error_message = "An entry with that title already exists."
-
-                return render(request, 'encyclopedia/newPage.html', {'form': form, 'error_message': error_message})
-
-
-            else:
+        else:
             
-                html_content = markdown.markdown(my_entry)
-                entry = util.save_entry(title, content)
+            if content is not None:
+
+                html_content = markdown.markdown(content)
                 
-                return render(request, 'encyclopedia/content.html', {'title': title, 'content': html_content})
+            entry = util.save_entry(title, content)
+                
+            return render(request, 'encyclopedia/content.html', {'title': title, 'content': html_content})
 
 
     else:
 
-        form = NewPageForm()
+        #form = NewPageForm()
 
 
-    return render(request, 'encyclopedia/newPage.html', {'form': form, 'error_message': None})
+        return render(request, 'encyclopedia/newPage.html')

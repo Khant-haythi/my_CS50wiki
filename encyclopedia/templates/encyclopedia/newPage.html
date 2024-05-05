@@ -9,22 +9,43 @@
 
 {% block body %}
 
-  <h2>Create a new page</h2>
 
-  {% if error_message %}
+  
 
-    <p><strong>{{ error_message |safe }}</strong></p>
+  <div class="container mb-3">
+
+    <h1>Create New Page</h1>
+
+    <form method="post">
+
+      {% csrf_token %}
+  
+      <div class="form-group">
+  
+        <label for="title">Title:</label>
+  
+        <input type="text" class="form-control" id="title" name="title" required>
+  
+      </div>
+  
+      <div class="form-group">
+  
+        <label for="content">Content:</label>
+  
+        <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
+  
+      </div>
+  
+      <button type="submit" class="btn btn-primary">Save</button>
+  
+    </form>
+    <br>
+    {% if error_message %}
+
+    <div class="p-3 mb-2 mx-3  text-white bg-danger border-primary ">
+      {{ error_message |safe }}
+    </div>
 
   {% endif %}
-
-  <form method="post">
-
-    {% csrf_token %}
-
-    {{ form.as_p|safe }}
-
-    <button type="submit">Save</button>
-
-  </form>
 
 {% endblock %}
