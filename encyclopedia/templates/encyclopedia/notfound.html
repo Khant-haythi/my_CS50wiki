@@ -1,0 +1,28 @@
+{% extends "encyclopedia/layout.html" %}
+
+
+{% block title %}
+
+    Error: Entry not found
+
+{% endblock %}
+
+
+{% block body %}
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-md-6 offset-md-3">
+
+                <h1 class="text-center mt-5 text-danger">Error: The requested page "{{ title }}" not found</h1>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
