@@ -22,5 +22,7 @@ urlpatterns = [
     path('', include("encyclopedia.urls")),
     path('wiki/<str:title>/', views.topic, name='topic'),
     path('search/', views.search, name='search'),
-    path('newPage/',views.new_page,name='new_page')
+    path('newPage/',views.new_page,name='new_page'),
+    path('editPage/<str:title>/',views.edit_page,name='edit_page'),
+    path('randomPage/',views.random_page,name='random_page'),
 ]

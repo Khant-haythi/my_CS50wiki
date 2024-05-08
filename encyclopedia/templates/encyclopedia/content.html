@@ -15,5 +15,7 @@
         {{ content|safe }}
 
     </div>
-
+    <div>
+        <a href="{% url 'edit_page' title=title %}"><strong>Edit</strong></a>
+    </div>
 {% endblock %}

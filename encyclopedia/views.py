@@ -2,7 +2,7 @@ from django import forms
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import redirect, render
 from django.urls import reverse
-import markdown
+import markdown,random
 from . import util
 from encyclopedia.models import Entry
 
@@ -13,6 +13,7 @@ def index(request):
         "entries": util.list_entries()
     })
 
+#For Entry Page
 def topic(request, title):
 
     md_content = util.get_entry(title)
@@ -26,8 +27,9 @@ def topic(request, title):
     else:
 
         return render(request, 'encyclopedia/notfound.html' , {'title': title } )
-    
 
+
+#For Searching
 def search(request):
 
     query = request.GET.get('q')
@@ -64,30 +66,21 @@ def search(request):
     
 
 #For create a New Page
-class NewPageForm(forms.Form):
-
-    title = forms.CharField(max_length=200)
-
-    content = forms.CharField(widget=forms.Textarea(attrs={'rows': 5, 'cols': 5}))
-
 
 def new_page(request):
 
     if request.method == "POST":
 
         title = request.POST.get('title')
-
         content = request.POST.get('content')
-
         
         my_entry = util.get_entry(title)
-      #  html_content = markdown.markdown(my_entry)
+     
         if my_entry:
 
             error_message = "An entry with that title already exists."
 
             return render(request, 'encyclopedia/newPage.html', {'title': title, 'content': content, 'error_message': error_message})
-
 
         else:
             
@@ -101,8 +94,37 @@ def new_page(request):
 
 
     else:
-
-        #form = NewPageForm()
-
-
+        
         return render(request, 'encyclopedia/newPage.html')
+    
+#For Edit Page
+def edit_page(request,title):
+    "Edit an existing page in encyclopedia"
+    entry = util.get_entry(title)
+
+    if request.method == "POST":
+        
+        content = request.POST.get('content')
+
+        if content is not None:
+
+            html_content = markdown.markdown(content)
+
+            util.save_entry(title, content)
+
+            return render(request, 'encyclopedia/content.html', {'title': title, 'content': html_content})
+
+
+    else:
+
+        return render(request, 'encyclopedia/editPage.html', {'title': title, 'content': entry})
+
+#For Random Page
+
+def random_page(request):
+
+    entries = util.list_entries()
+
+    random_entry = random.choice(entries)
+
+    return redirect('topic', title=random_entry)
